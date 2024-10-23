@@ -1,8 +1,8 @@
 <template>
   <div class="breakout-game">
     <div class="breakout-game__container">
+      <div>Level: {{ gameLevel }}</div>
       <div
-        :ref="(el) => (refs.board = el)"
         :style="{
           '--boardWidth': boardWidth + 'px',
           '--boardHeight': boardHeight + 'px',
@@ -16,6 +16,7 @@
           '--playerY': player.y + 'px',
         }"
         class="breakout-game__board"
+        @click="onClickBoard"
       >
         <div
           v-for="enemy in enemies"
@@ -26,18 +27,17 @@
             '--enemyX': enemy.x + 'px',
             '--enemyWidth': enemyWidth + 'px',
             '--enemyHeight': enemyHeight + 'px',
+            '--enemyHealth': (enemy.health || 1) * 2 + '0%',
           }"
           class="breakout-game__board--emeny"
-          :class="[{ destroyed: enemy.destroyed }]"
+          :class="[{ destroyed: enemy.health < 1 }]"
         >
           {{ enemy.id }}
+          <span v-if="enemy.health === undefined">:(</span>
         </div>
 
-        <div
-          :ref="(el) => (refs.ball = el)"
-          class="breakout-game__board--ball"
-        ></div>
-        <div class="breakout-game__board--player" @click="startGame"></div>
+        <div class="breakout-game__board--ball"></div>
+        <div class="breakout-game__board--player"></div>
       </div>
     </div>
   </div>
@@ -45,18 +45,24 @@
 
 <script setup>
 import { onMounted, onUnmounted, reactive, ref } from "vue";
-
-const gameStarted = ref(false);
+import { useBreakoutGame } from "./composables/useBreakoutGame";
 
 const boardWidth = 900;
 const boardHeight = 600;
 
-const gameSpeed = 10;
+const breakoutGame = useBreakoutGame({ boardWidth, boardHeight });
+console.log(breakoutGame);
+
+const gameStarted = ref(false);
+
+const gameLevel = ref(0);
+const gameSpeed = ref(0);
 const player = reactive({
   x: boardWidth / 2 - 150 / 2,
   y: 0,
   width: 150,
   height: 30,
+  movementDirection: "",
 });
 const ball = reactive({
   x: boardWidth / 2 - 20 / 2,
@@ -66,53 +72,27 @@ const ball = reactive({
   currentDir: "topRight",
   dirs: {
     topLeft: {
-      x: (prevX) => prevX - gameSpeed,
-      y: (prevY) => prevY + gameSpeed,
+      x: (prevX) => prevX - gameSpeed.value,
+      y: (prevY) => prevY + gameSpeed.value,
     },
     topRight: {
-      x: (prevX) => prevX + gameSpeed,
-      y: (prevY) => prevY + gameSpeed,
+      x: (prevX) => prevX + gameSpeed.value,
+      y: (prevY) => prevY + gameSpeed.value,
     },
     bottomLeft: {
-      x: (prevX) => prevX - gameSpeed,
-      y: (prevY) => prevY - gameSpeed,
+      x: (prevX) => prevX - gameSpeed.value,
+      y: (prevY) => prevY - gameSpeed.value,
     },
     bottomRight: {
-      x: (prevX) => prevX + gameSpeed,
-      y: (prevY) => prevY - gameSpeed,
+      x: (prevX) => prevX + gameSpeed.value,
+      y: (prevY) => prevY - gameSpeed.value,
     },
   },
 });
 
-const enemyWidth = 100;
-const enemyHeight = 20;
-const enemyGapY = 30;
-const enemies = reactive([
-  { x: 50, y: boardHeight - enemyHeight - enemyGapY, id: 1, destroyed: false },
-  { x: 170, y: boardHeight - enemyHeight - enemyGapY, id: 2 },
-  { x: 290, y: boardHeight - enemyHeight - enemyGapY, id: 3 },
-  { x: 410, y: boardHeight - enemyHeight - enemyGapY, id: 4 },
-  { x: 530, y: boardHeight - enemyHeight - enemyGapY, id: 5 },
-  { x: 650, y: boardHeight - enemyHeight - enemyGapY, id: 6 },
-  { x: 770, y: boardHeight - enemyHeight - enemyGapY, id: 7 },
-
-  { x: 50, y: boardHeight - enemyHeight * 3 - enemyGapY, id: 8 },
-  { x: 170, y: boardHeight - enemyHeight * 3 - enemyGapY, id: 9 },
-  { x: 290, y: boardHeight - enemyHeight * 3 - enemyGapY, id: 10 },
-  { x: 410, y: boardHeight - enemyHeight * 3 - enemyGapY, id: 11 },
-  { x: 530, y: boardHeight - enemyHeight * 3 - enemyGapY, id: 12 },
-  { x: 650, y: boardHeight - enemyHeight * 3 - enemyGapY, id: 13 },
-  { x: 770, y: boardHeight - enemyHeight * 3 - enemyGapY, id: 14 },
-
-  { x: 50, y: boardHeight - enemyHeight * 5 - enemyGapY, id: 15 },
-  { x: 170, y: boardHeight - enemyHeight * 5 - enemyGapY, id: 16 },
-  { x: 290, y: boardHeight - enemyHeight * 5 - enemyGapY, id: 17 },
-  { x: 410, y: boardHeight - enemyHeight * 5 - enemyGapY, id: 18 },
-  { x: 530, y: boardHeight - enemyHeight * 5 - enemyGapY, id: 19 },
-  { x: 650, y: boardHeight - enemyHeight * 5 - enemyGapY, id: 20 },
-  { x: 770, y: boardHeight - enemyHeight * 5 - enemyGapY, id: 21 },
-]);
-const refs = reactive({});
+const enemyWidth = ref(0);
+const enemyHeight = ref(0);
+const enemies = ref([]);
 
 function animation() {
   const { nextDirection } = checkContactWithEnemy();
@@ -141,15 +121,17 @@ function animation() {
   } else if (
     ball.y < player.height &&
     ball.x <= player.x + player.width &&
-    ball.x >= player.x
+    ball.x + ball.width >= player.x
   ) {
     if (ball.currentDir === "bottomRight") {
-      ball.currentDir = "topRight";
+      ball.currentDir =
+        player.movementDirection === "left" ? "topLeft" : "topRight";
     } else if (ball.currentDir === "bottomLeft") {
-      ball.currentDir = "topLeft";
+      ball.currentDir =
+        player.movementDirection === "right" ? "topRight" : "topLeft";
     }
   } else if (ball.y < 10) {
-    return reset();
+    return stopGame();
   }
 
   ball.x = ball.dirs[ball.currentDir].x(ball.x);
@@ -160,37 +142,52 @@ function animation() {
 }
 
 function checkContactWithEnemy() {
-  const enemy = enemies
-    .filter((el) => !el.destroyed)
-    .find((el) => {
-      if (ball.y + ball.height >= el.y && ball.y <= el.y + enemyHeight) {
-        if (ball.x + ball.width >= el.x && ball.x <= el.x + enemyWidth) {
-          return el;
-        }
+  const enemiesVithHealth = enemies.value.filter((el) => el.health);
+  if (!enemiesVithHealth.length) {
+    nextLEvel();
+  }
+
+  const enemy = enemiesVithHealth.find((el) => {
+    if (ball.y + ball.height >= el.y && ball.y <= el.y + enemyHeight.value) {
+      if (ball.x + ball.width >= el.x && ball.x <= el.x + enemyWidth.value) {
+        return el;
       }
-    });
+    }
+  });
 
   let nextDirection = "";
 
   if (enemy) {
-    enemy.destroyed = true;
+    enemy.health--;
     nextDirection = Object.entries({
       right: {
         // check right contact side
-        value: ball.x === enemy.x + enemyWidth,
+        // value: ball.x === enemy.x + enemyWidth.value,
+        value:
+          ball.x - gameSpeed.value <= enemy.x + enemyWidth.value &&
+          ball.x + gameSpeed.value >= enemy.x + enemyWidth.value,
         // if this contact side true then take this nextDir
         nextDir: ball.currentDir === "topLeft" ? "topRight" : "bottomRight",
       },
       left: {
-        value: ball.x + ball.width === enemy.x,
+        // value: ball.x + ball.width === enemy.x,
+        value:
+          ball.x + ball.width - gameSpeed.value <= enemy.x &&
+          ball.x + ball.width + gameSpeed.value >= enemy.x,
         nextDir: ball.currentDir === "topRight" ? "topLeft" : "bottomLeft",
       },
       top: {
-        value: ball.y === enemy.y + enemyHeight,
+        // value: ball.y === enemy.y + enemyHeight.value,
+        value:
+          ball.y - gameSpeed.value <= enemy.y + enemyHeight.value &&
+          ball.y + gameSpeed.value >= enemy.y + enemyHeight.value,
         nextDir: ball.currentDir === "bottomLeft" ? "topLeft" : "topRight",
       },
       bottom: {
-        value: ball.y + ball.height === enemy.y,
+        // value: ball.y + ball.height === enemy.y,
+        value:
+          ball.y + ball.height - gameSpeed.value <= enemy.y &&
+          ball.y + ball.height + gameSpeed.value >= enemy.y,
         nextDir: ball.currentDir === "topRight" ? "bottomRight" : "bottomLeft",
       },
     }).reduce((acc, [key, side]) => {
@@ -212,7 +209,10 @@ function checkContactWithEnemy() {
 }
 
 function onMouseMove(evt) {
-  player.x = player.x + evt.movementX;
+  player.x += evt.movementX;
+  player.movementDirection =
+    evt.movementX >= 4 ? "right" : evt.movementX <= -4 ? "left" : "";
+
   if (player.x < 0) {
     return (player.x = 0);
   }
@@ -221,26 +221,51 @@ function onMouseMove(evt) {
   }
 }
 
-function reset() {
+function onClickBoard() {
+  if (!gameStarted.value) {
+    gameStarted.value = true;
+    animation();
+    document.addEventListener("mousemove", onMouseMove);
+  }
+}
+
+function startGame() {
+  const game = breakoutGame.start();
+  enemyHeight.value = game.enemies.enemyHeight;
+  enemyWidth.value = game.enemies.enemyWidth;
+  enemies.value = game.enemies.items;
+  gameSpeed.value = game.gameSpeed;
+  gameLevel.value = game.level;
+}
+
+function stopGame() {
+  gameStarted.value = false;
+  document.removeEventListener("mousemove", onMouseMove);
   player.x = boardWidth / 2 - player.width / 2;
   ball.x = boardWidth / 2 - ball.width / 2;
   ball.y = 30;
   ball.currentDir = "topRight";
-  gameStarted.value = false;
-  enemies.forEach((el) => {
-    el.destroyed = false;
-  });
-  document.removeEventListener("mousemove", onMouseMove);
 }
 
-function startGame() {
-  gameStarted.value = true;
-  animation();
-  document.addEventListener("mousemove", onMouseMove);
+function nextLEvel() {
+  stopGame();
+  const game = breakoutGame.nextLevel();
+  enemyHeight.value = game.enemies.enemyHeight;
+  enemyWidth.value = game.enemies.enemyWidth;
+  enemies.value = game.enemies.items;
+  gameSpeed.value = game.gameSpeed;
+  gameLevel.value = game.level;
+}
+
+function reset() {
+  enemies.value.forEach((el) => {
+    el.health = 1;
+  });
+  stopGame();
 }
 
 onMounted(() => {
-  // startGame();
+  startGame();
 });
 onUnmounted(() => {
   reset();
@@ -288,7 +313,8 @@ onUnmounted(() => {
       left: var(--enemyX);
       width: var(--enemyWidth);
       height: var(--enemyHeight);
-      background-color: brown;
+      background: color-mix(in srgb, #2b2b2b var(--enemyHealth, 50%), #c9c9c9)
+        100%;
 
       &.destroyed {
         visibility: hidden;
