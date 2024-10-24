@@ -1,5 +1,5 @@
 <template>
-  <div class="breakout-game">
+  <div class="breakout-game" @click="onClickBoard">
     <div class="breakout-game__container">
       <div>Level: {{ gameLevel }}</div>
       <div
@@ -16,7 +16,6 @@
           '--playerY': player.y + 'px',
         }"
         class="breakout-game__board"
-        @click="onClickBoard"
       >
         <div
           v-for="enemy in enemies"
@@ -27,10 +26,16 @@
             '--enemyX': enemy.x + 'px',
             '--enemyWidth': enemyWidth + 'px',
             '--enemyHeight': enemyHeight + 'px',
-            '--enemyHealth': (enemy.health || 1) * 2 + '0%',
+            '--enemyHealth': enemy.health || 1,
           }"
           class="breakout-game__board--emeny"
-          :class="[{ destroyed: enemy.health < 1 }]"
+          :class="[
+            {
+              destroyed: enemy.health < 1,
+              'health-2': enemy.health === 2,
+              'health-3': enemy.health > 2,
+            },
+          ]"
         >
           {{ enemy.id }}
           <span v-if="enemy.health === undefined">:(</span>
@@ -162,7 +167,6 @@ function checkContactWithEnemy() {
     nextDirection = Object.entries({
       right: {
         // check right contact side
-        // value: ball.x === enemy.x + enemyWidth.value,
         value:
           ball.x - gameSpeed.value <= enemy.x + enemyWidth.value &&
           ball.x + gameSpeed.value >= enemy.x + enemyWidth.value,
@@ -170,21 +174,18 @@ function checkContactWithEnemy() {
         nextDir: ball.currentDir === "topLeft" ? "topRight" : "bottomRight",
       },
       left: {
-        // value: ball.x + ball.width === enemy.x,
         value:
           ball.x + ball.width - gameSpeed.value <= enemy.x &&
           ball.x + ball.width + gameSpeed.value >= enemy.x,
         nextDir: ball.currentDir === "topRight" ? "topLeft" : "bottomLeft",
       },
       top: {
-        // value: ball.y === enemy.y + enemyHeight.value,
         value:
           ball.y - gameSpeed.value <= enemy.y + enemyHeight.value &&
           ball.y + gameSpeed.value >= enemy.y + enemyHeight.value,
         nextDir: ball.currentDir === "bottomLeft" ? "topLeft" : "topRight",
       },
       bottom: {
-        // value: ball.y + ball.height === enemy.y,
         value:
           ball.y + ball.height - gameSpeed.value <= enemy.y &&
           ball.y + ball.height + gameSpeed.value >= enemy.y,
@@ -201,8 +202,6 @@ function checkContactWithEnemy() {
       }
       return acc;
     }, "");
-
-    // ball.direction.change();
   }
 
   return { enemy, nextDirection };
@@ -214,10 +213,13 @@ function onMouseMove(evt) {
     evt.movementX >= 4 ? "right" : evt.movementX <= -4 ? "left" : "";
 
   if (player.x < 0) {
-    return (player.x = 0);
+    player.x = 0;
   }
   if (player.x > boardWidth - player.width) {
-    return (player.x = boardWidth - player.width);
+    player.x = boardWidth - player.width;
+  }
+  if (!gameStarted.value) {
+    ball.x = player.x + player.width / 2 - ball.width / 2;
   }
 }
 
@@ -225,7 +227,6 @@ function onClickBoard() {
   if (!gameStarted.value) {
     gameStarted.value = true;
     animation();
-    document.addEventListener("mousemove", onMouseMove);
   }
 }
 
@@ -236,11 +237,11 @@ function startGame() {
   enemies.value = game.enemies.items;
   gameSpeed.value = game.gameSpeed;
   gameLevel.value = game.level;
+  document.addEventListener("mousemove", onMouseMove);
 }
 
 function stopGame() {
   gameStarted.value = false;
-  document.removeEventListener("mousemove", onMouseMove);
   player.x = boardWidth / 2 - player.width / 2;
   ball.x = boardWidth / 2 - ball.width / 2;
   ball.y = 30;
@@ -313,9 +314,20 @@ onUnmounted(() => {
       left: var(--enemyX);
       width: var(--enemyWidth);
       height: var(--enemyHeight);
-      background: color-mix(in srgb, #2b2b2b var(--enemyHealth, 50%), #c9c9c9)
-        100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #9c9c9c;
+      background: #c9c9c9;
 
+      &.health-2 {
+        background: #b4b4b4;
+        border: 2px dotted gold;
+      }
+      &.health-3 {
+        background: #a8a8a8;
+        border: 2px dashed gold;
+      }
       &.destroyed {
         visibility: hidden;
         opacity: 0;
