@@ -1,7 +1,15 @@
 <template>
   <div class="breakout-game" @click="onClickBoard">
     <div class="breakout-game__container">
-      <div>Level: {{ gameLevel }}</div>
+      <div class="breakout-game__header">
+        <span>Level: {{ gameLevel }}</span>
+        <div class="player-health">
+          <div v-for="health in player.maxHealth" :key="health">
+            <span v-if="player.health >= health">❤️</span>
+            <span v-else>🖤</span>
+          </div>
+        </div>
+      </div>
       <div
         :style="{
           '--boardWidth': boardWidth + 'px',
@@ -51,12 +59,13 @@
 <script setup>
 import { onMounted, onUnmounted, reactive, ref } from "vue";
 import { useBreakoutGame } from "./composables/useBreakoutGame";
+import { useSounds } from "./composables/useSounds";
 
 const boardWidth = 900;
 const boardHeight = 600;
 
 const breakoutGame = useBreakoutGame({ boardWidth, boardHeight });
-console.log(breakoutGame);
+const { sounds } = useSounds();
 
 const gameStarted = ref(false);
 
@@ -68,6 +77,8 @@ const player = reactive({
   width: 150,
   height: 30,
   movementDirection: "",
+  health: 5,
+  maxHealth: 5,
 });
 const ball = reactive({
   x: boardWidth / 2 - 20 / 2,
@@ -100,16 +111,25 @@ const enemyHeight = ref(0);
 const enemies = ref([]);
 
 function animation() {
-  const { nextDirection } = checkContactWithEnemy();
+  const { nextDirection, enemiesVithHealth } = checkContactWithEnemy();
+  if (!enemiesVithHealth.length) {
+    nextLevel();
+    return;
+  }
+
   if (nextDirection) {
+    sounds.kick3.play();
+
     ball.currentDir = nextDirection;
   } else if (ball.x > boardWidth - ball.width) {
+    sounds.kick.play();
     if (ball.currentDir === "topRight") {
       ball.currentDir = "topLeft";
     } else if (ball.currentDir === "bottomRight") {
       ball.currentDir = "bottomLeft";
     }
   } else if (ball.x <= 0) {
+    sounds.kick.play();
     if (ball.currentDir === "topLeft") {
       ball.currentDir = "topRight";
     } else if (ball.currentDir === "bottomLeft") {
@@ -118,6 +138,7 @@ function animation() {
   }
 
   if (ball.y > boardHeight - ball.height) {
+    sounds.kick.play();
     if (ball.currentDir === "topRight") {
       ball.currentDir = "bottomRight";
     } else if (ball.currentDir === "topLeft") {
@@ -128,6 +149,7 @@ function animation() {
     ball.x <= player.x + player.width &&
     ball.x + ball.width >= player.x
   ) {
+    sounds.kick.play();
     if (ball.currentDir === "bottomRight") {
       ball.currentDir =
         player.movementDirection === "left" ? "topLeft" : "topRight";
@@ -136,7 +158,15 @@ function animation() {
         player.movementDirection === "right" ? "topRight" : "topLeft";
     }
   } else if (ball.y < 10) {
-    return stopGame();
+    player.health--;
+    if (player.health < 1) {
+      gameOver();
+      return;
+    } else {
+      sounds.ballOut.play();
+      stopGame();
+      return;
+    }
   }
 
   ball.x = ball.dirs[ball.currentDir].x(ball.x);
@@ -148,9 +178,6 @@ function animation() {
 
 function checkContactWithEnemy() {
   const enemiesVithHealth = enemies.value.filter((el) => el.health);
-  if (!enemiesVithHealth.length) {
-    nextLEvel();
-  }
 
   const enemy = enemiesVithHealth.find((el) => {
     if (ball.y + ball.height >= el.y && ball.y <= el.y + enemyHeight.value) {
@@ -204,7 +231,7 @@ function checkContactWithEnemy() {
     }, "");
   }
 
-  return { enemy, nextDirection };
+  return { enemy, enemiesVithHealth, nextDirection };
 }
 
 function onMouseMove(evt) {
@@ -237,6 +264,8 @@ function startGame() {
   enemies.value = game.enemies.items;
   gameSpeed.value = game.gameSpeed;
   gameLevel.value = game.level;
+  player.health = player.maxHealth;
+  document.removeEventListener("mousemove", onMouseMove);
   document.addEventListener("mousemove", onMouseMove);
 }
 
@@ -248,14 +277,32 @@ function stopGame() {
   ball.currentDir = "topRight";
 }
 
-function nextLEvel() {
+function nextLevel() {
   stopGame();
   const game = breakoutGame.nextLevel();
+  if (!game) {
+    sounds.gameWin.play();
+    setTimeout(() => {
+      alert("GAME WON!!!");
+      startGame();
+    }, 100);
+    return;
+  }
+
   enemyHeight.value = game.enemies.enemyHeight;
   enemyWidth.value = game.enemies.enemyWidth;
   enemies.value = game.enemies.items;
   gameSpeed.value = game.gameSpeed;
   gameLevel.value = game.level;
+}
+
+function gameOver() {
+  sounds.gameOver.play();
+  setTimeout(() => {
+    alert("GAME OVER");
+    stopGame();
+    startGame();
+  }, 100);
 }
 
 function reset() {
@@ -280,6 +327,18 @@ onUnmounted(() => {
   align-items: center;
   justify-content: center;
   background-color: grey;
+
+  &__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    .player-health {
+      display: flex;
+      align-items: center;
+      padding: 4px 0;
+    }
+  }
 
   &__board {
     position: relative;

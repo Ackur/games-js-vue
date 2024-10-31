@@ -1,6 +1,9 @@
 import { ref } from "vue";
 
 const enemySchemas = {
+  test: JSON.parse(`[
+          0, 0, 0, 0, 0, 0, 1
+        ]`),
   one: JSON.parse(`[
           3, 3, 3, 3, 3, 3, 3,
           3, 0, 0, 0, 0, 0, 0,
@@ -64,7 +67,7 @@ export const useBreakoutGame = ({ boardHeight, boardWidth }) => {
   const gameLevels = [
     {
       level: 1,
-      gameSpeed: 5,
+      gameSpeed: 15,
       enemies: enemyPresets.default(enemySchemas.three),
     },
     {
@@ -108,12 +111,28 @@ export const useBreakoutGame = ({ boardHeight, boardWidth }) => {
   }
 
   function nextLevel() {
-    levelIndex.value++;
-    return gameLevels.at(levelIndex.value);
+    try {
+      levelIndex.value++;
+      const nextGameData = gameLevels.at(levelIndex.value);
+
+      if (!nextGameData) return;
+
+      const levelData = JSON.parse(JSON.stringify(nextGameData));
+
+      return levelData;
+    } catch (error) {
+      console.log(error);
+      throw error;
+    }
+  }
+
+  function start() {
+    levelIndex.value = 0;
+    return JSON.parse(JSON.stringify(gameLevels.at(levelIndex.value)));
   }
 
   return {
-    start: () => gameLevels.at(levelIndex.value),
+    start,
     nextLevel,
   };
 };

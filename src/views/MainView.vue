@@ -31,7 +31,7 @@ const gameList = {
   },
 };
 
-const selectedGame = shallowRef(gameList.breakoutGame);
+const selectedGame = shallowRef({});
 
 function onClickGame(game) {
   selectedGame.value = game;
