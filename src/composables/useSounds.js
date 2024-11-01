@@ -12,6 +12,18 @@ class GameAudio {
 
 export const useSounds = () => {
   const sounds = {
+    pageturn: {
+      instance: new GameAudio("/audio/pageturn-102978.mp3"),
+      play: () => sounds.pageturn.instance.play(),
+    },
+    flipcard: {
+      instance: new GameAudio("/audio/flipcard-91468.mp3"),
+      play: () => sounds.flipcard.instance.play(),
+    },
+    tada: {
+      instance: new GameAudio("/audio/level-up-bonus-sequence-1-186890.mp3"),
+      play: () => sounds.tada.instance.play(),
+    },
     kick: {
       instance: new GameAudio("/audio/kick-v1.aac"),
       play: () => sounds.kick.instance.play(),

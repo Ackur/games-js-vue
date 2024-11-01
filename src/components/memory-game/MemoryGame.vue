@@ -24,25 +24,19 @@
         </button>
       </nav>
     </div>
+
+    <ConfettiComponent :ref="(el) => (refs.confetti = el)" />
   </div>
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { reactive, ref } from "vue";
+import { useSounds } from "../../composables/useSounds";
 
 import MamoryGameBoardItem from "./MamoryGameBoardItem.vue";
+import ConfettiComponent from "../ConfettiComponent.vue";
 
-const audio = {
-  pageturn: {
-    play: () => new Audio("/audio/pageturn-102978.mp3").play(),
-  },
-  flipcard: {
-    play: () => new Audio("/audio/flipcard-91468.mp3").play(),
-  },
-  tada: {
-    play: () => new Audio("/audio/level-up-bonus-sequence-1-186890.mp3").play(),
-  },
-};
+const { sounds } = useSounds();
 
 const items = ref([
   {
@@ -127,6 +121,8 @@ const items = ref([
   },
 ]);
 
+const refs = reactive({});
+
 const selectedState = ref([]);
 const countOfMoves = ref(0);
 const bestScore = ref(0);
@@ -143,7 +139,7 @@ function onClickBoard(evt) {
 
   selectedItem.selected = true;
   selectedState.value.push(selectedItem);
-  audio.pageturn.play();
+  sounds.pageturn.play();
 
   if (selectedState.value.length < 2) return;
 
@@ -161,9 +157,9 @@ function onClickBoard(evt) {
       selectedState.value = [];
 
       if (isMatched) {
-        audio.tada.play();
+        sounds.tada.play();
       } else {
-        audio.flipcard.play();
+        sounds.flipcard.play();
       }
 
       const gameIsOver = items.value.every((item) => item.matched);
@@ -171,6 +167,8 @@ function onClickBoard(evt) {
         if (!bestScore.value || countOfMoves.value < bestScore.value) {
           bestScore.value = countOfMoves.value;
         }
+        sounds.gameWin.play();
+        refs.confetti?.piu();
       }
     },
     isMatched ? 0 : 700

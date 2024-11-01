@@ -67,7 +67,7 @@ export const useBreakoutGame = ({ boardHeight, boardWidth }) => {
   const gameLevels = [
     {
       level: 1,
-      gameSpeed: 15,
+      gameSpeed: 5,
       enemies: enemyPresets.default(enemySchemas.three),
     },
     {

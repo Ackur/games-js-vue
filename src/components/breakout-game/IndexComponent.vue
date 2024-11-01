@@ -2,11 +2,15 @@
   <div class="breakout-game" @click="onClickBoard">
     <div class="breakout-game__container">
       <div class="breakout-game__header">
-        <span>Level: {{ gameLevel }}</span>
+        <span class="level-info">Level: {{ gameLevel }}</span>
         <div class="player-health">
-          <div v-for="health in player.maxHealth" :key="health">
-            <span v-if="player.health >= health">❤️</span>
-            <span v-else>🖤</span>
+          <div
+            v-for="health in player.maxHealth"
+            :key="health"
+            class="player-health--item"
+          >
+            <span v-if="player.health >= health" class="item-present">❤️</span>
+            <span v-else class="item-missing">🖤</span>
           </div>
         </div>
       </div>
@@ -53,13 +57,18 @@
         <div class="breakout-game__board--player"></div>
       </div>
     </div>
+
+    <ConfettiComponent :ref="(el) => (refs.confetti = el)" />
   </div>
 </template>
 
 <script setup>
 import { onMounted, onUnmounted, reactive, ref } from "vue";
+import { useSounds } from "../../composables/useSounds";
 import { useBreakoutGame } from "./composables/useBreakoutGame";
-import { useSounds } from "./composables/useSounds";
+import ConfettiComponent from "../ConfettiComponent.vue";
+
+const refs = reactive({});
 
 const boardWidth = 900;
 const boardHeight = 600;
@@ -282,6 +291,7 @@ function nextLevel() {
   const game = breakoutGame.nextLevel();
   if (!game) {
     sounds.gameWin.play();
+    refs.confetti?.piu();
     setTimeout(() => {
       alert("GAME WON!!!");
       startGame();
@@ -333,10 +343,19 @@ onUnmounted(() => {
     align-items: center;
     justify-content: space-between;
 
+    .level-info {
+      color: #daa520;
+      font-weight: bold;
+    }
+
     .player-health {
       display: flex;
       align-items: center;
       padding: 4px 0;
+
+      .item-present {
+        filter: drop-shadow(0px 0px 1px #950000);
+      }
     }
   }
 
@@ -355,7 +374,11 @@ onUnmounted(() => {
       width: var(--ballWidth);
       height: var(--ballHeight);
       border-radius: var(--ballWidth);
-      background-color: red;
+      background: radial-gradient(
+        farthest-corner at 13px 5px,
+        #ddd 0%,
+        #ff0000 50%
+      );
     }
 
     &--player {
@@ -364,7 +387,8 @@ onUnmounted(() => {
       left: var(--playerX);
       width: var(--playerWidth);
       height: var(--playerHeight);
-      background-color: goldenrod;
+      background-color: #daa520;
+      box-shadow: inset -2px -2px 4px 0px #9e9e9e, inset 2px 2px 4px 0px #9e9e9e;
     }
 
     &--emeny {
@@ -378,14 +402,13 @@ onUnmounted(() => {
       justify-content: center;
       color: #9c9c9c;
       background: #c9c9c9;
+      box-shadow: 2px 2px 4px 0px #a9a9a9;
 
       &.health-2 {
-        background: #b4b4b4;
-        border: 2px dotted gold;
+        border: 2px dotted #a9a9a9;
       }
       &.health-3 {
-        background: #a8a8a8;
-        border: 2px dashed gold;
+        border: 2px dashed #a9a9a9;
       }
       &.destroyed {
         visibility: hidden;
