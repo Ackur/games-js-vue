@@ -130,19 +130,20 @@ function onMouseLeave() {
 
   & &--text {
     position: absolute;
-    bottom: 10px;
+    bottom: 5px;
     left: 50%;
     color: #fff;
     background: rgba($color: #000000, $alpha: 0.1);
     backdrop-filter: blur(5px);
-    padding: 20px 25px;
-    border-radius: 30px;
-    text-decoration: none;
+    padding: 10px 20px;
+    border-radius: 10px;
     transition: 0.5s;
     transform: translate3d(-50%, 0, 0);
-    font-weight: 600;
-    line-height: 1;
+    font-size: 24px;
+    font-weight: 400;
+    text-transform: uppercase;
     text-align: center;
+    text-wrap: nowrap;
     z-index: 10;
   }
 
@@ -166,6 +167,10 @@ function onMouseLeave() {
 
     .card-3d--image {
       filter: drop-shadow(2px 4px 6px black);
+    }
+
+    .card-3d--text {
+      text-shadow: 3px 3px 5px #000000;
     }
   }
 }
