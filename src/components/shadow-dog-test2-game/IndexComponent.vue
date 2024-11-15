@@ -9,7 +9,6 @@
 
 <script setup>
 import { onMounted, reactive } from "vue";
-import { useGame } from "./composables/useGame";
 
 const refs = reactive({});
 
@@ -21,20 +20,18 @@ const sounds = {
 let ctx = null;
 let canvasPosition = null;
 const canvasWidth = 1000;
-const canvasHeight = 500;
+const canvasHeight = 700;
 
-let lastFrameTime = 0;
-let game = null;
+let lastTime = 0;
 
 function init() {
-  /** @type {HTMLCanvasElement} */
   ctx = refs.canvas.getContext("2d");
   refs.canvas.width = canvasWidth;
   refs.canvas.height = canvasHeight;
 
   canvasPosition = refs.canvas.getBoundingClientRect();
 
-  game = useGame(ctx);
+  console.log(ctx);
 
   animate(0);
 }
@@ -42,11 +39,8 @@ function init() {
 function animate(timestamp) {
   ctx.clearRect(0, 0, canvasWidth, canvasHeight);
 
-  let deltaTime = timestamp - lastFrameTime;
-  lastFrameTime = timestamp;
-
-  game.update(deltaTime);
-  game.draw();
+  let deltaTime = timestamp - lastTime;
+  lastTime = timestamp;
 
   window.requestAnimationFrame(animate);
 }

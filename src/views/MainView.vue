@@ -45,7 +45,7 @@ const gameList = {
   },
 };
 
-const selectedGame = shallowRef({});
+const selectedGame = shallowRef(gameList.shadowDog);
 
 function onClickGame(game) {
   selectedGame.value = game;

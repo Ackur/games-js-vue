@@ -21,7 +21,7 @@ export class Particle {
 
   draw(ctx) {
     ctx.save();
-    ctx.globalAlpha = 0.05;
+    ctx.globalAlpha = 0.02;
     ctx.beginPath();
     ctx.fillStyle = this.color;
     ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
