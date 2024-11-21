@@ -11,6 +11,7 @@ export const useGame = (ctx) => {
   const speed = 0;
   const maxSpeed = 3;
   let score = 0;
+  // eslint-disable-next-line no-unused-vars
   let debug = false;
   let fontColor = "black";
 
@@ -49,7 +50,7 @@ export const useGame = (ctx) => {
     fontColor,
     player,
     update,
-    draw,
+    draw
   };
 
   inputs = useInputs(returnOptions);
