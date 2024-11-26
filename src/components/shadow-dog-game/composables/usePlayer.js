@@ -10,6 +10,7 @@ export const usePlayer = (game, inputs) => {
   const width = 100;
   const height = 91.3;
   const options = {
+    lives: 5,
     x: 0,
     y: game.height - height - game.groundMargin,
     vy: 0,
@@ -18,7 +19,7 @@ export const usePlayer = (game, inputs) => {
     maxSpeed: 10,
     frameX: 0,
     frameY: 0,
-    maxFrame: 0,
+    maxFrame: 0
   };
   const fps = 20;
   const frameInterval = 1000 / fps;
@@ -38,8 +39,9 @@ export const usePlayer = (game, inputs) => {
 
     // horizontal movement
     options.x += options.speed;
-    if (isKeyNamePresetInKeys(ArrowRight)) options.speed = options.maxSpeed;
-    else if (isKeyNamePresetInKeys(ArrowLeft))
+    if (isKeyNamePresetInKeys(ArrowRight) && currrentState.name !== "HIT") {
+      options.speed = options.maxSpeed;
+    } else if (isKeyNamePresetInKeys(ArrowLeft) && currrentState.name !== "HIT")
       options.speed = -options.maxSpeed;
     else options.speed = 0;
 
@@ -50,6 +52,11 @@ export const usePlayer = (game, inputs) => {
     options.y += options.vy;
     if (!isOnGround()) options.vy += options.weight;
     else options.vy = 0;
+
+    // vertical boundaries
+    if (options.y > game.height - height - game.groundMargin) {
+      options.y = game.height - height - game.groundMargin;
+    }
 
     // sprite animation
     if (frameTimer > frameInterval) {
@@ -64,9 +71,15 @@ export const usePlayer = (game, inputs) => {
     if (currrentState.name === "RUNNING") {
       particles.addDust(options.x + width / 2, options.y + height);
     }
-    if (currrentState.name === "ROLLING") {
+    if (["ROLLING", "DIVING"].includes(currrentState.name)) {
       particles.addFire(options.x + width * 0.7, options.y + height * 0.5);
     }
+    if (currrentState.name === "DIVING" && this.isOnGround()) {
+      for (let i = 0; i < 30; i++) {
+        particles.addSplash(options.x + width * 0.5, options.y + height * 0.8);
+      }
+    }
+
     particles.update();
   }
 
@@ -98,8 +111,21 @@ export const usePlayer = (game, inputs) => {
         enemy.y < options.y + height &&
         enemy.y + enemy.height > options.y
       ) {
+        if (["DIVING", "ROLLING"].includes(currrentState.name)) {
+          game.enemies.addCollisionAnimation(
+            enemy.x + enemy.width / 2,
+            enemy.y + enemy.height / 2
+          );
+          game.score++;
+          game.contentUI.addFloatingMessage("+1", enemy.x, enemy.y, 100, 40);
+        } else if (currrentState.name !== "HIT") {
+          setState(states.HIT);
+          options.lives--;
+          if (options.lives <= 0) {
+            game.gameOver.value = true;
+          }
+        }
         enemy.markedForDeletion = true;
-        game.score++;
       }
     });
   }
@@ -129,7 +155,7 @@ export const usePlayer = (game, inputs) => {
     update,
     draw,
     setState,
-    isOnGround,
+    isOnGround
   };
 
   init(returnOptions);

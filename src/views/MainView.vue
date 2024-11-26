@@ -26,26 +26,26 @@ const gameList = {
   memoryGame: {
     name: "Memory Game",
     component: MemoryGame,
-    image: "/images/memory-game-v2.svg",
+    image: "/images/memory-game-v2.svg"
   },
   breakoutGame: {
     name: "Breakout Game",
     component: BreakoutGame,
-    image: "/images/breakout-game.webp",
+    image: "/images/breakout-game.webp"
   },
   EnemyShooter: {
     name: "Enemy Shooter",
     component: EnemyShooter,
-    image: "",
+    image: ""
   },
   shadowDog: {
     name: "Shadow dog",
     component: ShadowDog,
-    image: "/images/shadow-dog.svg",
-  },
+    image: "/images/shadow-dog.svg"
+  }
 };
 
-const selectedGame = shallowRef(gameList.shadowDog);
+const selectedGame = shallowRef({});
 
 function onClickGame(game) {
   selectedGame.value = game;

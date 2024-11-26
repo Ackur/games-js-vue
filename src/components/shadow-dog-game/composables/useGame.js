@@ -1,6 +1,6 @@
 import { useEnemies } from "./enemies/useEnemies";
 import { useBackgrounds } from "./useBackgrounds";
-import { useContentUI } from "./useContentUI";
+import { useContentUI } from "./content-ui/useContentUI";
 import { useInputs } from "./useInputs";
 import { usePlayer } from "./usePlayer";
 
@@ -11,6 +11,9 @@ export const useGame = (ctx) => {
   const speed = 0;
   const maxSpeed = 3;
   let score = 0;
+  let time = { value: 0 };
+  const maxTime = 30 * 1000;
+  const gameOver = { value: false };
   // eslint-disable-next-line no-unused-vars
   let debug = false;
   let fontColor = "black";
@@ -22,9 +25,14 @@ export const useGame = (ctx) => {
   let contentUI = null;
 
   function update(deltaTime) {
+    time.value += deltaTime;
+    if (time.value > maxTime) gameOver.value = true;
+
     backgrounds.update(deltaTime);
 
     enemies.update(deltaTime);
+
+    contentUI.update();
 
     player.update(deltaTime);
   }
@@ -49,6 +57,8 @@ export const useGame = (ctx) => {
     score,
     fontColor,
     player,
+    time,
+    gameOver,
     update,
     draw
   };

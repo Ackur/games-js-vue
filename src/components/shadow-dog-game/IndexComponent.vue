@@ -14,7 +14,7 @@ import { useGame } from "./composables/useGame";
 const refs = reactive({});
 
 const sounds = {
-  boom: { play: () => new Audio("/audio/shoot/SHOOT005.mp3").play() },
+  boom: { play: () => new Audio("/audio/shoot/SHOOT005.mp3").play() }
 };
 
 /** @type {HTMLCanvasElement} */
@@ -23,7 +23,7 @@ let canvasPosition = null;
 const canvasWidth = 1000;
 const canvasHeight = 500;
 
-let lastFrameTime = 0;
+let lastFrameTime = document.timeline.currentTime;
 let game = null;
 
 function init() {
@@ -36,10 +36,10 @@ function init() {
 
   game = useGame(ctx);
 
-  animate(0);
+  animate();
 }
 
-function animate(timestamp) {
+function animate(timestamp = document.timeline.currentTime) {
   ctx.clearRect(0, 0, canvasWidth, canvasHeight);
 
   let deltaTime = timestamp - lastFrameTime;
@@ -48,13 +48,19 @@ function animate(timestamp) {
   game.update(deltaTime);
   game.draw();
 
-  window.requestAnimationFrame(animate);
+  if (!game.gameOver.value) window.requestAnimationFrame(animate);
 }
 
 onMounted(init);
 </script>
 
 <style lang="scss" scoped>
+@font-face {
+  font-family: "Creepster";
+  src: url(/fonts/Creepster/Creepster-Regular.ttf) format("truetype");
+  font-weight: 400;
+  font-display: swap;
+}
 .shadow-game {
   & &__canvas {
     position: absolute;

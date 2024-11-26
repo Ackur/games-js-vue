@@ -63,3 +63,28 @@ export class Fire extends Particle {
     this.game.ctx.restore();
   }
 }
+
+export class Splash extends Particle {
+  image = new Image();
+
+  constructor(game, x, y) {
+    super(game);
+    this.image.src = "/images/shadow-dog/fire.png";
+    this.size = Math.random() * 100 + 100;
+    this.x = x - this.size * 0.4;
+    this.y = y - this.size * 0.5;
+    this.speedX = Math.random() * 6 - 4;
+    this.speedY = Math.random() * 2 + 1;
+    this.gravity = 0;
+  }
+
+  update() {
+    super.update();
+    this.gravity += 0.1;
+    this.y += this.gravity;
+  }
+
+  draw() {
+    this.game.ctx.drawImage(this.image, this.x, this.y, this.size, this.size);
+  }
+}

@@ -1,4 +1,4 @@
-import { Dust, Fire } from "./components/Particles";
+import { Dust, Fire, Splash } from "./components/Particles";
 
 export const useParticles = (game) => {
   let particles = [];
@@ -12,6 +12,10 @@ export const useParticles = (game) => {
     particles.unshift(new Dust(game, x, y));
   }
 
+  function addSplash(x, y) {
+    particles.unshift(new Splash(game, x, y));
+  }
+
   function update() {
     particles.forEach((particle, index) => {
       particle.update();
@@ -19,7 +23,7 @@ export const useParticles = (game) => {
     });
 
     if (particles.length > maxParticles) {
-      particles.slice(0, maxParticles);
+      particles.length = maxParticles;
     }
   }
 
@@ -30,5 +34,5 @@ export const useParticles = (game) => {
     });
   }
 
-  return { addDust, addFire, update, draw };
+  return { addDust, addFire, addSplash, update, draw };
 };

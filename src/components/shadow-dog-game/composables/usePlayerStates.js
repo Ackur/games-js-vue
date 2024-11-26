@@ -20,7 +20,7 @@ export const usePlayerStates = (game, player, inputs) => {
         } else if (isKeyNamePresetInKeys(ArrowUp))
           player.setState(states.JUMPING);
         else if (isKeyNamePresetInKeys(Space)) player.setState(states.ROLLING);
-      },
+      }
     },
     RUNNING: {
       name: "RUNNING",
@@ -35,12 +35,12 @@ export const usePlayerStates = (game, player, inputs) => {
         else if (isKeyNamePresetInKeys(ArrowUp))
           player.setState(states.JUMPING);
         else if (isKeyNamePresetInKeys(Space)) player.setState(states.ROLLING);
-      },
+      }
     },
     JUMPING: {
       name: "JUMPING",
       enter: () => {
-        if (player.isOnGround()) player.options.vy -= 20;
+        if (player.isOnGround()) player.options.vy -= 25;
         player.options.frameX = 0;
         player.options.maxFrame = 6;
         player.options.frameY = 1;
@@ -50,7 +50,9 @@ export const usePlayerStates = (game, player, inputs) => {
         if (player.options.vy > player.options.weight)
           player.setState(states.FALLING);
         else if (isKeyNamePresetInKeys(Space)) player.setState(states.ROLLING);
-      },
+        else if (isKeyNamePresetInKeys(ArrowDown))
+          player.setState(states.DIVING);
+      }
     },
     FALLING: {
       name: "FALLING",
@@ -65,7 +67,9 @@ export const usePlayerStates = (game, player, inputs) => {
           player.setState(states.RUNNING);
         } else if (isKeyNamePresetInKeys(Space))
           player.setState(states.ROLLING);
-      },
+        else if (isKeyNamePresetInKeys(ArrowDown))
+          player.setState(states.DIVING);
+      }
     },
     ROLLING: {
       name: "ROLLING",
@@ -78,11 +82,48 @@ export const usePlayerStates = (game, player, inputs) => {
       handleInput: (keys) => {
         if (!isKeyNamePresetInKeys(Space) && player.isOnGround()) {
           player.setState(states.RUNNING);
+        } else if (isKeyNamePresetInKeys(ArrowUp) && player.isOnGround()) {
+          player.setState(states.JUMPING);
         } else if (!isKeyNamePresetInKeys(Space) && !player.isOnGround()) {
           player.setState(states.FALLING);
+        } else if (isKeyNamePresetInKeys(ArrowDown) && !player.isOnGround()) {
+          player.setState(states.DIVING);
         }
-      },
+      }
     },
+    DIVING: {
+      name: "DIVING",
+      enter: () => {
+        player.options.frameX = 0;
+        player.options.maxFrame = 6;
+        player.options.frameY = 6;
+        player.options.vy = 15;
+        game.speed = game.maxSpeed * 0;
+      },
+      handleInput: (keys) => {
+        if (isKeyNamePresetInKeys(Space) && player.isOnGround()) {
+          player.setState(states.ROLLING);
+        } else if (player.isOnGround()) {
+          player.setState(states.RUNNING);
+        }
+      }
+    },
+    HIT: {
+      name: "HIT",
+      enter: () => {
+        player.options.frameX = 0;
+        player.options.maxFrame = 10;
+        player.options.frameY = 4;
+        game.speed = game.maxSpeed * 0;
+      },
+      handleInput: (keys) => {
+        if (player.options.frameX >= 10 && player.isOnGround()) {
+          player.setState(states.SITTING);
+        } else if (player.options.frameX >= 10 && !player.isOnGround()) {
+          player.setState(states.FALLING);
+        }
+      }
+    }
   };
 
   return states;
