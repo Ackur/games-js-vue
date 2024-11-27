@@ -16,22 +16,22 @@
 
 <script setup>
 import { shallowRef } from "vue";
-import MemoryGame from "../components/memory-game/MemoryGame.vue";
-import BreakoutGame from "../components/breakout-game/IndexComponent.vue";
-import ShadowDog from "../components/shadow-dog-game/IndexComponent.vue";
-import EnemyShooter from "../components/enemy-shooting-game/IndexComponent.vue";
-import Card3D from "../components/ui/Card3D.vue";
+import MemoryGame from "@/components/memory-game/MemoryGame.vue";
+import BreakoutGame from "@/components/breakout-game/IndexComponent.vue";
+import ShadowDog from "@/components/shadow-dog-game/IndexComponent.vue";
+import EnemyShooter from "@/components/enemy-shooting-game/IndexComponent.vue";
+import Card3D from "@/components/ui/Card3D.vue";
 
 const gameList = {
   memoryGame: {
     name: "Memory Game",
     component: MemoryGame,
-    image: "/images/memory-game-v2.svg"
+    image: "./images/memory-game-v2.svg"
   },
   breakoutGame: {
     name: "Breakout Game",
     component: BreakoutGame,
-    image: "/images/breakout-game.webp"
+    image: "./images/breakout-game.webp"
   },
   EnemyShooter: {
     name: "Enemy Shooter",
@@ -41,7 +41,7 @@ const gameList = {
   shadowDog: {
     name: "Shadow dog",
     component: ShadowDog,
-    image: "/images/shadow-dog.svg"
+    image: "./images/shadow-dog.svg"
   }
 };
 
