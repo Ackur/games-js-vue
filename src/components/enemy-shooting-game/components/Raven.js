@@ -1,9 +1,9 @@
-import { getRandomColor } from "../../../utils";
+import { getRandomColor } from "@/utils";
 import { Particle } from "./Particle";
 
 let particles = [];
 const ravenImage = new Image();
-ravenImage.src = "/images/shadow-dog/enemies/raven.png";
+ravenImage.src = "./images/shadow-dog/enemies/raven.png";
 
 export class Raven {
   constructor(canvasWidth, canvasHeight) {

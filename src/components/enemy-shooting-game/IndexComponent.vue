@@ -20,7 +20,7 @@ import { Raven } from "./components/Raven";
 const refs = reactive({});
 
 const sounds = {
-  boom: { play: () => new Audio("/audio/shoot/SHOOT005.mp3").play() },
+  boom: { play: () => new Audio("./audio/shoot/SHOOT005.mp3").play() }
 };
 
 /** @type {HTMLCanvasElement} */
@@ -119,10 +119,14 @@ onMounted(init);
     border: 1px solid;
     margin: auto;
     background: #ddd;
-    cursor: url("/images/shoot.svg") 32 32, auto;
+    cursor:
+      url("/images/shoot.svg") 32 32,
+      auto;
 
     &:active {
-      cursor: url("/images/shoot-small.svg") 24 24, auto;
+      cursor:
+        url("/images/shoot-small.svg") 24 24,
+        auto;
     }
 
     &.collision {
