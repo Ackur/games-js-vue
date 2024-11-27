@@ -1,6 +1,7 @@
 {
   "name": "js-vue-games",
   "private": true,
+  "homepage": "https://ackur.github.io/games-js-vue/",
   "version": "0.0.0",
   "type": "module",
   "scripts": {
