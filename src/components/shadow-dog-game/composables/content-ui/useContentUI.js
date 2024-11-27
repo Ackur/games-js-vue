@@ -5,7 +5,7 @@ export const useContentUI = (game) => {
   const fontFamily = "Creepster";
 
   const livesImage = new Image();
-  livesImage.src = "/images/shadow-dog/lives.png";
+  livesImage.src = "./images/shadow-dog/lives.png";
 
   let floatingMessages = [];
 

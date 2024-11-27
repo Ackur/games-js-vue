@@ -6,7 +6,7 @@ export const usePlayer = (game, inputs) => {
   const { ArrowLeft, ArrowRight } = keysNames;
 
   const image = new Image();
-  image.src = "/images/shadow-dog/player.png";
+  image.src = "./images/shadow-dog/player.png";
   const width = 100;
   const height = 91.3;
   const options = {

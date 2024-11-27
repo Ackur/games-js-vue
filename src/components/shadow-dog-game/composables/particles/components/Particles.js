@@ -35,7 +35,7 @@ export class Fire extends Particle {
 
   constructor(game, x, y) {
     super(game);
-    this.image.src = "/images/shadow-dog/fire.png";
+    this.image.src = "./images/shadow-dog/fire.png";
     this.size = Math.random() * 100 + 50;
     this.x = x;
     this.y = y;
@@ -69,7 +69,7 @@ export class Splash extends Particle {
 
   constructor(game, x, y) {
     super(game);
-    this.image.src = "/images/shadow-dog/fire.png";
+    this.image.src = "./images/shadow-dog/fire.png";
     this.size = Math.random() * 100 + 100;
     this.x = x - this.size * 0.4;
     this.y = y - this.size * 0.5;

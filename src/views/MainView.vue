@@ -22,16 +22,19 @@ import ShadowDog from "@/components/shadow-dog-game/IndexComponent.vue";
 import EnemyShooter from "@/components/enemy-shooting-game/IndexComponent.vue";
 import Card3D from "@/components/ui/Card3D.vue";
 
+import f from "/images/memory-game-v2.svg";
+console.log(f);
+
 const gameList = {
   memoryGame: {
     name: "Memory Game",
     component: MemoryGame,
-    image: "./images/memory-game-v2.svg"
+    image: f
   },
   breakoutGame: {
     name: "Breakout Game",
     component: BreakoutGame,
-    image: "./images/breakout-game.webp"
+    image: "/images/breakout-game.webp"
   },
   EnemyShooter: {
     name: "Enemy Shooter",
@@ -41,7 +44,7 @@ const gameList = {
   shadowDog: {
     name: "Shadow dog",
     component: ShadowDog,
-    image: "./images/shadow-dog.svg"
+    image: "/images/shadow-dog.svg"
   }
 };
 

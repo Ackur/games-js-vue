@@ -5,7 +5,7 @@ class Layer {
     this.width = width;
     this.height = height;
     this.speedModifier = speedModifier;
-    this.image.src = "/images/shadow-dog/backgroundLayers/" + imageName;
+    this.image.src = "./images/shadow-dog/backgroundLayers/" + imageName;
     this.x = 0;
     this.y = 0;
   }
@@ -49,7 +49,7 @@ export const useBackgrounds = (game) => {
       new Layer(game, "layer2-2.png", width, height, 0.2),
       new Layer(game, "layer2-3.png", width, height, 0.4),
       new Layer(game, "layer2-4.png", width, height, 0.8),
-      new Layer(game, "layer2-5.png", width, height, 1),
+      new Layer(game, "layer2-5.png", width, height, 1)
     ];
   }
 
@@ -57,6 +57,6 @@ export const useBackgrounds = (game) => {
 
   return {
     update,
-    draw,
+    draw
   };
 };

@@ -10,7 +10,7 @@
       <span class="card-3d--name">click to play</span>
       <img
         :ref="(el) => (refs.cardImage = el)"
-        :src="props.image || '/vite.svg'"
+        :src="props.image || './vite.svg'"
         class="card-3d--image"
         alt="card image"
       />
@@ -92,7 +92,8 @@ function onMouseLeave() {
     border-radius: 20px;
     will-change: transform;
     transition: transform 0.25s ease-out;
-    box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1),
+    box-shadow:
+      0 20px 25px -5px rgb(0 0 0 / 0.1),
       0 8px 10px -6px rgb(0 0 0 / 0.1);
     overflow: hidden;
   }

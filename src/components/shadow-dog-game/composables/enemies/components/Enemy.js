@@ -49,7 +49,7 @@ export class EnemyCollisionAnimation {
 
   constructor(game, x, y) {
     this.game = game;
-    this.image.src = "/images/shadow-dog/boom.png";
+    this.image.src = "./images/shadow-dog/boom.png";
     this.spriteWidth = 100;
     this.spriteHeight = 90;
     this.sizeModifier = Math.random() + 0.5;
@@ -100,7 +100,7 @@ export class FlyingEnemy extends Enemy {
     this.speedX = Math.random() + 1;
     this.speedY = 0;
     this.maxFrame = 5;
-    this.image.src = "/images/shadow-dog/enemies/enemy_fly.png";
+    this.image.src = "./images/shadow-dog/enemies/enemy_fly.png";
     this.angle = 0;
     this.va = Math.random() * 0.1 + 0.1;
   }
@@ -120,7 +120,7 @@ export class GroundEnemy extends Enemy {
     this.speedX = 0;
     this.speedY = 0;
     this.maxFrame = 1;
-    this.image.src = "/images/shadow-dog/enemies/enemy_plant.png";
+    this.image.src = "./images/shadow-dog/enemies/enemy_plant.png";
   }
 }
 export class ClimbingEnemy extends Enemy {
@@ -133,7 +133,7 @@ export class ClimbingEnemy extends Enemy {
     this.speedX = 0;
     this.speedY = Math.random() > 0.5 ? 1 : -1;
     this.maxFrame = 5;
-    this.image.src = "/images/shadow-dog/enemies/enemy_spider_big.png";
+    this.image.src = "./images/shadow-dog/enemies/enemy_spider_big.png";
   }
 
   update(deltaTime) {

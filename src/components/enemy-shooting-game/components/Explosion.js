@@ -1,5 +1,5 @@
 const image = new Image();
-image.src = "/images/shadow-dog/boom.png";
+image.src = "./images/shadow-dog/boom.png";
 
 export class Explosion {
   constructor(x, y, size) {
