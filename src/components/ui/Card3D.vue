@@ -10,7 +10,7 @@
       <span class="card-3d--name">click to play</span>
       <img
         :ref="(el) => (refs.cardImage = el)"
-        :src="props.image || './vite.svg'"
+        :src="props.image || './images/icons/game-icon.svg'"
         class="card-3d--image"
         alt="card image"
       />

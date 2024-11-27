@@ -36,12 +36,12 @@ const gameList = {
   EnemyShooter: {
     name: "Enemy Shooter",
     component: EnemyShooter,
-    image: ""
+    image: "./images/enemy-shooter.webp"
   },
   shadowDog: {
     name: "Shadow dog",
     component: ShadowDog,
-    image: "./images/shadow-dog.svg"
+    image: "./images/shadow-dog.webp"
   }
 };
 
