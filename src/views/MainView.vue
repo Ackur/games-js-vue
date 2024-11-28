@@ -54,15 +54,14 @@ function onClickGame(game) {
 
 <style lang="scss">
 .main-view {
-  min-height: 100svh;
   background-color: #9b1d1d;
-  overflow: hidden;
 
   .game-list {
-    height: 100svh;
+    min-height: 100svh;
     display: flex;
     align-items: center;
     justify-content: center;
+    flex-wrap: wrap;
   }
 }
 </style>

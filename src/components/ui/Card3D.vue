@@ -80,14 +80,18 @@ function onMouseLeave() {
   position: relative;
   max-width: 360px;
   width: 100%;
-  height: 400px;
+  height: fit-content;
   padding: 20px;
   cursor: pointer;
 
   &__content {
     position: relative;
     width: 100%;
-    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
     background: rgba($color: #000000, $alpha: 0.1);
     border-radius: 20px;
     will-change: transform;
@@ -95,6 +99,7 @@ function onMouseLeave() {
     box-shadow:
       0 20px 25px -5px rgb(0 0 0 / 0.1),
       0 8px 10px -6px rgb(0 0 0 / 0.1);
+    padding: 30px 0;
     overflow: hidden;
   }
 
@@ -130,16 +135,12 @@ function onMouseLeave() {
   }
 
   & &--text {
-    position: absolute;
-    bottom: 5px;
-    left: 50%;
     color: #fff;
     background: rgba($color: #000000, $alpha: 0.1);
     backdrop-filter: blur(5px);
     padding: 10px 20px;
     border-radius: 10px;
     transition: 0.5s;
-    transform: translate3d(-50%, 0, 0);
     font-size: 24px;
     font-weight: 400;
     text-transform: uppercase;
@@ -149,14 +150,10 @@ function onMouseLeave() {
   }
 
   & &--image {
-    position: absolute;
-    top: 50%;
-    left: 50%;
     aspect-ratio: 4 / 4;
     width: 100%;
     max-width: 80%;
     object-fit: contain;
-    transform: translate3d(-50%, -50%, 0);
     transition: 0.5s;
   }
 
