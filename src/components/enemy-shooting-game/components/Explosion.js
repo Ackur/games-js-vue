@@ -3,11 +3,11 @@ image.src = "./images/shadow-dog/boom.png";
 
 export class Explosion {
   constructor(x, y, size) {
-    this.spriteWidth = 200;
-    this.spriteHeight = 179;
+    this.spriteWidth = 100;
+    this.spriteHeight = 90;
     this.width = this.spriteWidth * 0.7;
     this.height = this.spriteHeight * 0.7;
-    this.size = size * 0.7;
+    this.size = size * 0.5;
     this.x = x;
     this.y = y;
     this.frame = 0;

@@ -1,12 +1,12 @@
 import { getRandomColor } from "@/utils";
 import { Particle } from "./Particle";
 
-let particles = [];
-const ravenImage = new Image();
-ravenImage.src = "./images/shadow-dog/enemies/raven.png";
-
 export class Raven {
+  image = new Image();
+  particles = [];
+
   constructor(canvasWidth, canvasHeight) {
+    this.image.src = "./images/shadow-dog/enemies/raven.png";
     this.spriteWidth = 271;
     this.spriteHeight = 194;
     this.sizeModifier = Math.random() * 0.6 + 0.4;
@@ -52,11 +52,11 @@ export class Raven {
     }
 
     if (this.hasTrail) {
-      particles.push(
+      this.particles.push(
         new Particle(this.x, this.y, this.width, this.color.style)
       );
-      particles.forEach((el) => el.update(ctx));
-      particles = particles.filter((el) => !el.markedForDeletion);
+      this.particles.forEach((el) => el.update(ctx));
+      this.particles = this.particles.filter((el) => !el.markedForDeletion);
     }
 
     ctxCollision.fillStyle = this.color.style;
@@ -64,7 +64,7 @@ export class Raven {
     ctxCollision.fillRect(this.x, this.y, this.width, this.height);
 
     ctx.drawImage(
-      ravenImage,
+      this.image,
       this.frame * this.spriteWidth,
       0,
       this.spriteWidth,

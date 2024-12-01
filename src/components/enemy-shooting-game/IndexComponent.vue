@@ -1,19 +1,19 @@
 <template>
-  <div class="shadow-game">
+  <div class="shooting-game">
     <canvas
       :ref="(el) => (refs.canvas = el)"
-      class="shadow-game__canvas"
+      class="shooting-game__canvas"
     ></canvas>
     <canvas
       :ref="(el) => (refs.canvasCollision = el)"
-      class="shadow-game__canvas collision"
+      class="shooting-game__canvas collision"
       @click="onClickCanvas"
     ></canvas>
   </div>
 </template>
 
 <script setup>
-import { onMounted, reactive } from "vue";
+import { onMounted, onUnmounted, reactive } from "vue";
 import { Explosion } from "./components/Explosion";
 import { Raven } from "./components/Raven";
 
@@ -30,14 +30,16 @@ let canvasPosition = null;
 const canvasWidth = 800;
 const canvasHeight = 700;
 let gameScore = 0;
+let gameStope = false;
 
 let timeToNextRaven = 0;
 let ravenInterval = 500;
-let lastTime = 0;
+let lastTime = document.timeline.currentTime;
 let revens = [];
 let explosions = [];
 
 function init() {
+  gameStope = false;
   ctx = refs.canvas.getContext("2d");
   refs.canvas.width = canvasWidth;
   refs.canvas.height = canvasHeight;
@@ -47,10 +49,10 @@ function init() {
 
   canvasPosition = refs.canvas.getBoundingClientRect();
 
-  animate(0);
+  animate();
 }
 
-function animate(timestamp) {
+function animate(timestamp = document.timeline.currentTime) {
   let deltaTime = timestamp - lastTime;
   lastTime = timestamp;
 
@@ -70,7 +72,7 @@ function animate(timestamp) {
   explosions = explosions.filter((el) => !el.markedForDeletion);
   drawScore();
 
-  window.requestAnimationFrame(animate);
+  if (!gameStope) window.requestAnimationFrame(animate);
 }
 
 function drawScore() {
@@ -109,11 +111,16 @@ function onClickCanvas(evt) {
   sounds.boom.play();
 }
 onMounted(init);
+onUnmounted(() => {
+  gameStope = true;
+});
 </script>
 
 <style lang="scss" scoped>
-.shadow-game {
+.shooting-game {
   & &__canvas {
+    max-width: 100svw;
+    max-height: 100svh;
     position: absolute;
     inset: 0;
     border: 1px solid;

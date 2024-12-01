@@ -25,7 +25,7 @@
           '--playerWidth': player.width + 'px',
           '--playerHeight': player.height + 'px',
           '--playerX': player.x + 'px',
-          '--playerY': player.y + 'px',
+          '--playerY': player.y + 'px'
         }"
         class="breakout-game__board"
       >
@@ -38,15 +38,15 @@
             '--enemyX': enemy.x + 'px',
             '--enemyWidth': enemyWidth + 'px',
             '--enemyHeight': enemyHeight + 'px',
-            '--enemyHealth': enemy.health || 1,
+            '--enemyHealth': enemy.health || 1
           }"
           class="breakout-game__board--emeny"
           :class="[
             {
               destroyed: enemy.health < 1,
               'health-2': enemy.health === 2,
-              'health-3': enemy.health > 2,
-            },
+              'health-3': enemy.health > 2
+            }
           ]"
         >
           {{ enemy.id }}
@@ -87,7 +87,7 @@ const player = reactive({
   height: 30,
   movementDirection: "",
   health: 5,
-  maxHealth: 5,
+  maxHealth: 5
 });
 const ball = reactive({
   x: boardWidth / 2 - 20 / 2,
@@ -98,21 +98,21 @@ const ball = reactive({
   dirs: {
     topLeft: {
       x: (prevX) => prevX - gameSpeed.value,
-      y: (prevY) => prevY + gameSpeed.value,
+      y: (prevY) => prevY + gameSpeed.value
     },
     topRight: {
       x: (prevX) => prevX + gameSpeed.value,
-      y: (prevY) => prevY + gameSpeed.value,
+      y: (prevY) => prevY + gameSpeed.value
     },
     bottomLeft: {
       x: (prevX) => prevX - gameSpeed.value,
-      y: (prevY) => prevY - gameSpeed.value,
+      y: (prevY) => prevY - gameSpeed.value
     },
     bottomRight: {
       x: (prevX) => prevX + gameSpeed.value,
-      y: (prevY) => prevY - gameSpeed.value,
-    },
-  },
+      y: (prevY) => prevY - gameSpeed.value
+    }
+  }
 });
 
 const enemyWidth = ref(0);
@@ -207,32 +207,32 @@ function checkContactWithEnemy() {
           ball.x - gameSpeed.value <= enemy.x + enemyWidth.value &&
           ball.x + gameSpeed.value >= enemy.x + enemyWidth.value,
         // if this contact side true then take this nextDir
-        nextDir: ball.currentDir === "topLeft" ? "topRight" : "bottomRight",
+        nextDir: ball.currentDir === "topLeft" ? "topRight" : "bottomRight"
       },
       left: {
         value:
           ball.x + ball.width - gameSpeed.value <= enemy.x &&
           ball.x + ball.width + gameSpeed.value >= enemy.x,
-        nextDir: ball.currentDir === "topRight" ? "topLeft" : "bottomLeft",
+        nextDir: ball.currentDir === "topRight" ? "topLeft" : "bottomLeft"
       },
       top: {
         value:
           ball.y - gameSpeed.value <= enemy.y + enemyHeight.value &&
           ball.y + gameSpeed.value >= enemy.y + enemyHeight.value,
-        nextDir: ball.currentDir === "bottomLeft" ? "topLeft" : "topRight",
+        nextDir: ball.currentDir === "bottomLeft" ? "topLeft" : "topRight"
       },
       bottom: {
         value:
           ball.y + ball.height - gameSpeed.value <= enemy.y &&
           ball.y + ball.height + gameSpeed.value >= enemy.y,
-        nextDir: ball.currentDir === "topRight" ? "bottomRight" : "bottomLeft",
-      },
+        nextDir: ball.currentDir === "topRight" ? "bottomRight" : "bottomLeft"
+      }
     }).reduce((acc, [key, side]) => {
       if (!acc && side.value) {
         console.log({
           ...side,
           contactSide: key,
-          currentDir: ball.currentDir,
+          currentDir: ball.currentDir
         });
         acc = side.nextDir;
       }
@@ -388,7 +388,9 @@ onUnmounted(() => {
       width: var(--playerWidth);
       height: var(--playerHeight);
       background-color: #daa520;
-      box-shadow: inset -2px -2px 4px 0px #9e9e9e, inset 2px 2px 4px 0px #9e9e9e;
+      box-shadow:
+        inset -2px -2px 4px 0px #9e9e9e,
+        inset 2px 2px 4px 0px #9e9e9e;
     }
 
     &--emeny {
